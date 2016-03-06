@@ -20,6 +20,7 @@ namespace Kekstoaster.Syntax
 		private ScopeType _stdScope;
 		private HashSet<string> _inits;
 		private bool _compiling;
+		private IDocumemtEncoder _encoder;
 
 		/// <summary>
 		/// This event is raised when the parsing process was successfull.
@@ -39,7 +40,10 @@ namespace Kekstoaster.Syntax
 		/// if no scope type was specified for a <see cref="Kekstoaster.Syntax.Ebnf"/>.</param>
 		/// <param name="standardCompileBehavior">[Optional] The default compiling result that is returned
 		/// if no CompileAction was set for a <see cref="Kekstoaster.Syntax.Ebnf"/> element.</param>
-		public EbnfCompiler (Ebnf root, ScopeType standardScopeType = ScopeType.Inhired, EbnfCompileBehavior standardCompileBehavior = EbnfCompileBehavior.Text)
+		/// /// <param name="encoder">[Optional] The encoding of the document being parsed.
+		/// If no encoder was set for a <see cref="Kekstoaster.Syntax.Ebnf"/> element,
+		/// every byte will be used as an individual character.</param>
+		public EbnfCompiler (Ebnf root, ScopeType standardScopeType = ScopeType.Inhired, EbnfCompileBehavior standardCompileBehavior = EbnfCompileBehavior.Text, IDocumemtEncoder encoder = null)
 		{
 			this._root = root;
 			this._globals = new ItemList<object> ();
@@ -47,6 +51,7 @@ namespace Kekstoaster.Syntax
 			this._stdScope = standardScopeType;
 			this._inits = new HashSet<string> ();
 			this._compiling = false;
+			this._encoder = encoder;
 		}
 
 		/// <summary>
@@ -65,6 +70,15 @@ namespace Kekstoaster.Syntax
 		}
 
 		/// <summary>
+		/// Gets the <see cref="Kekstoaster.Syntax.IDocumemtEncoder"/> 
+		/// that is used to retrieve the next char item from the
+		/// supplied byte stream.
+		/// </summary>
+		public IDocumemtEncoder Encoder {
+			get { return this._encoder; }
+		}
+
+		/// <summary>
 		/// Gets the list of Global variables that is used during parsing and compiling actions.
 		/// </summary>
 		public ItemList<object> Globals {
@@ -80,7 +94,8 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <param name="stream">The Stream that is used for compiling</param>
 		/// <returns>The final compiling result. This could be anything.</returns>
-		public object Compile(Stream stream) {
+		public object Compile (Stream stream)
+		{
 			if (!_compiling) {
 				_compiling = true;
 				object compile;
@@ -116,7 +131,7 @@ namespace Kekstoaster.Syntax
 					throw new ArgumentException ("Stream must be readable and must support seaking", "stream");
 				}
 			} else {
-				throw new CompileException("Compiler already in use.");
+				throw new CompileException ("Compiler already in use.");
 			}
 		}
 
@@ -125,11 +140,12 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <param name="text">The text for compiling.</param>
 		/// <returns>The final compiling result. This could be anything.</returns>
-		public object Compile(string text) {
-			MemoryStream stream = new MemoryStream();
-			StreamWriter writer = new StreamWriter(stream);
-			writer.Write(text);
-			writer.Flush();
+		public object Compile (string text)
+		{
+			MemoryStream stream = new MemoryStream ();
+			StreamWriter writer = new StreamWriter (stream);
+			writer.Write (text);
+			writer.Flush ();
 
 			stream.Position = 0;
 
@@ -141,15 +157,17 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <returns>The final compiling result. This could be anything.</returns>
 		/// <param name="path">The path to the file.</param>
-		public object CompileFile(string path) {
+		public object CompileFile (string path)
+		{
 			return Compile (File.ReadAllText (path));
 		}
 
 		// Hases all labels, that an Ebnf element has, and marks it as initialized.
 		// For two different Ebnf elements with the same label, only for the first occuring
 		// the initilize action is called. The other one is asumed to be already initilized.
-		internal bool Initialization(string name) {
-			if(_inits.Contains(name)){
+		internal bool Initialization (string name)
+		{
+			if (_inits.Contains (name)) {
 				return false;
 			} else {
 				_inits.Add (name);
@@ -158,7 +176,8 @@ namespace Kekstoaster.Syntax
 		}
 
 		// Create the Error message with line number and line position
-		private static string ErrorText(Stream s, EbnfElementException ex) {
+		private static string ErrorText (Stream s, EbnfElementException ex)
+		{
 			string resStr;
 			long pos = s.Position;
 			s.Position = 0;
@@ -166,20 +185,20 @@ namespace Kekstoaster.Syntax
 			int linePos = 1;
 			int next;
 
-			for(long i = 0; i < pos; ++i) {
+			for (long i = 0; i < pos; ++i) {
 				next = s.ReadByte ();
 				linePos++;
 
-				if(next == (int)'\n') {
+				if (next == (int)'\n') {
 					line++;
 					linePos = 1;
 				}
 			}
 
-			if(string.IsNullOrEmpty(ex.Message)) {
-				resStr = string.Format("syntax error on line {0}:{1}", line, linePos);
+			if (string.IsNullOrEmpty (ex.Message)) {
+				resStr = string.Format ("syntax error on line {0}:{1}", line, linePos);
 			} else {
-				resStr = string.Format("syntax error on line {0}:{1}\r\n{2}", line, linePos, ex.Message);
+				resStr = string.Format ("syntax error on line {0}:{1}\r\n{2}", line, linePos, ex.Message);
 			}
 
 			return resStr;
