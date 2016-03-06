@@ -3,14 +3,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{357A7386-E6D6-4450-8D85-51E260FDA14F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Kekstoaster.Syntax</RootNamespace>
     <AssemblyName>Syntax</AssemblyName>
     <SynchReleaseVersion>false</SynchReleaseVersion>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +21,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <GenerateDocumentation>true</GenerateDocumentation>
+    <DocumentationFile>bin\Debug\Syntax.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -58,10 +58,14 @@
     <Compile Include="Enums\ScopeType.cs" />
     <Compile Include="Enums\EbnfStandardBehavior.cs" />
     <Compile Include="Ebnf\EbnfTemplates.cs" />
+    <Compile Include="Encoding\EofException.cs" />
+    <Compile Include="Encoding\EncoderUTF8.cs" />
+    <Compile Include="Encoding\IDocumemtEncoder.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Ebnf\" />
     <Folder Include="Enums\" />
+    <Folder Include="Encoding\" />
   </ItemGroup>
 </Project>

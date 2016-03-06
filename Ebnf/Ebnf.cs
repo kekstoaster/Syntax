@@ -224,11 +224,26 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		public const string EOF_LABEL = "[[EOF]]";
 
+		// Element type
 		private EbnfType _type;
+		// if char single char array
+		// if range, char array with 2 elements, from - to
 		private char[] _char;
+		// list with containing elements:
+		// * Any, Range, EOF, Char - Empty
+		// * Repeat, Optional, Not - one element
+		// * List, Choise, Permutation - any number
 		private List<Ebnf> _list;
+		// error message for bad parsing
 		private string _error = null;
+		// unique flag, only applicable to list and permutation
+		// if unique elements are partly matched but fail parsing,
+		// the entire document fails parsing
+		// i.e. a wrong string "foo bar
+		// fails and cannot be something else so the document is broken
 		private bool _unique = false;
+		// label for identifing the element
+		// elements with equal label are considered to be the same element
 		private string _label = null;
 
 		private ParseAction _parse = null;
@@ -240,16 +255,12 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <param name="c">The character to check for.</param>
 		/// <param name="scopetype">The scopetype when parsing the element.</param>
-		public Ebnf (char c, ScopeType scopetype = ScopeType.Default) {
-		    // Matching of chars with Stream.ReadByte, so Character will only be from 0 to 255
-			if ((int)c >= 0 || (int)c <= 255) {
-				this._type = EbnfType.Char;
-				this._char = new char[] { c };
-				this._label = c.ToString();
-				_scopeType = scopetype;
-			} else {
-				throw new ArgumentException("The character for parsing can only be from 0 to 255");
-			}
+		public Ebnf (char c, ScopeType scopetype = ScopeType.Default)
+		{
+			this._type = EbnfType.Char;
+			this._char = new char[] { c };
+			this._label = c.ToString ();
+			_scopeType = scopetype;
 		}
 
 		/// <summary>
@@ -257,7 +268,8 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <param name="s">The string that must be matched.</param>
 		/// <param name="scopetype">The scopetype when parsing the element.</param>
-		public Ebnf (string s, ScopeType scopetype = ScopeType.Default) {
+		public Ebnf (string s, ScopeType scopetype = ScopeType.Default)
+		{
 			Ebnf n = (Ebnf)s;
 			this._list = n._list;
 			this._type = EbnfType.List;
@@ -265,8 +277,9 @@ namespace Kekstoaster.Syntax
 			_scopeType = scopetype;
 		}
 
-		// Used for initilizing all Ebnf types
-		private Ebnf(EbnfType t) {
+		// Used for initilizing all Ebnf subtypes
+		private Ebnf (EbnfType t)
+		{
 			this._type = t;
 			_scopeType = ScopeType.Default;
 		}
@@ -277,28 +290,24 @@ namespace Kekstoaster.Syntax
 		/// <param name="fromChar">The starting character code that is matched.</param>
 		/// <param name="toChar">The last character code that will be matched.</param>
 		/// <param name="scopetype">The scopetype when parsing the element.</param>
-		public static Ebnf Range(char fromChar, char toChar, ScopeType scopetype = ScopeType.Default) {
-			// Matching of chars with Stream.ReadByte, so Character will only be from 0 to 255
-			if (fromChar >= 0 && fromChar <= 255 && toChar >= 0 && toChar <= 255) {
-				// Both chars equal -> normal character type is used
-				if (fromChar == toChar) {
-					return new Ebnf (fromChar, scopetype);
-				} else {
-					Ebnf n = new Ebnf (EbnfType.Range);
-					n._scopeType = scopetype;
-					// check for order, if toChar < fromChar swap both to create range
-					if (fromChar < toChar) {
-						n._char = new char[] { fromChar, toChar };
-						n._label = "[" + fromChar.ToString() + "-" + toChar.ToString() + "]";
-					} else {
-						n._char = new char[] { toChar, fromChar };
-						n._label = "[" + toChar.ToString() + "-" + fromChar.ToString() + "]";
-					}
-
-					return n;
-				}
+		public static Ebnf Range (char fromChar, char toChar, ScopeType scopetype = ScopeType.Default)
+		{
+			// Both chars equal -> normal character type is used
+			if (fromChar == toChar) {
+				return new Ebnf (fromChar, scopetype);
 			} else {
-				throw new ArgumentException("The characters for parsing can only be from 0 to 255");
+				Ebnf n = new Ebnf (EbnfType.Range);
+				n._scopeType = scopetype;
+				// check for order, if toChar < fromChar swap both to create range
+				if (fromChar < toChar) {
+					n._char = new char[] { fromChar, toChar };
+					n._label = "[" + fromChar.ToString () + "-" + toChar.ToString () + "]";
+				} else {
+					n._char = new char[] { toChar, fromChar };
+					n._label = "[" + toChar.ToString () + "-" + fromChar.ToString () + "]";
+				}
+
+				return n;
 			}
 		}
 
@@ -318,7 +327,8 @@ namespace Kekstoaster.Syntax
 
 		/// <param name="x1">The element that will be extended.</param>
 		/// <param name="x2">The element that will be added to the first operand.</param>
-		public static Ebnf operator + (Ebnf x1, Ebnf x2) {
+		public static Ebnf operator + (Ebnf x1, Ebnf x2)
+		{
 			return x1.Append (x2);
 		}
 
@@ -327,9 +337,10 @@ namespace Kekstoaster.Syntax
 		/// Can only be used on Choise, List, Permutation
 		/// </summary>
 		/// <param name="x">The element that will be added to the list.</param>
-		public Ebnf Append(Ebnf x) {
-			if(this._type != EbnfType.Choise && this._type != EbnfType.List && this._type != EbnfType.Permutation) {
-				throw new ArgumentException("Cannot append object to non-List nor non-choise type");
+		public Ebnf Append (Ebnf x)
+		{
+			if (this._type != EbnfType.Choise && this._type != EbnfType.List && this._type != EbnfType.Permutation) {
+				throw new ArgumentException ("Cannot append object to non-List nor non-choise type");
 			}
 			this._list.Add (x);
 			return this;
@@ -341,9 +352,10 @@ namespace Kekstoaster.Syntax
 
 		/// <param name="x1">The first value for the choise.</param>
 		/// <param name="x2">The second value for the choise.</param>
-		public static Ebnf operator | (Ebnf x1, Ebnf x2) {
+		public static Ebnf operator | (Ebnf x1, Ebnf x2)
+		{
 			return Or (x1, x2);
-		}		
+		}
 
 		/// <summary>
 		/// Creates a choise element combining x1 and x2 to the list.
@@ -352,17 +364,18 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <param name="x1">The first value for the choise.</param>
 		/// <param name="x2">The second value for the choise.</param>
-		public static Ebnf Or(Ebnf x1, Ebnf x2) {
+		public static Ebnf Or (Ebnf x1, Ebnf x2)
+		{
 			// create a new choise to get a new reference
 			Ebnf n = new Ebnf (EbnfType.Choise);
 			n._list = new List<Ebnf> ();
 
 			// if any x1 or x2 is a choise, combine the elements
-			if(x1._type == EbnfType.Choise && x1._compile == null) {
+			if (x1._type == EbnfType.Choise && x1._compile == null) {
 				n._list.AddRange (x1._list);
-				if(x2._type == EbnfType.Choise && x1._compile == null) {
+				if (x2._type == EbnfType.Choise && x1._compile == null) {
 					foreach (var item in x2._list) {
-						if(!n._list.Contains(item)) {
+						if (!n._list.Contains (item)) {
 							n._list.Add (item);
 						}
 					}
@@ -372,7 +385,7 @@ namespace Kekstoaster.Syntax
 					}
 				}
 			} else {
-				if(x2._type == EbnfType.Choise && x2._compile == null) {
+				if (x2._type == EbnfType.Choise && x2._compile == null) {
 					n._list.AddRange (x2._list);
 					if (!n._list.Contains (x1)) {
 						n._list.Add (x1);
@@ -394,7 +407,8 @@ namespace Kekstoaster.Syntax
 
 		/// <param name="x1">The first value for the list.</param>
 		/// <param name="x2">The second value for the list.</param>
-		public static Ebnf operator & (Ebnf x1, Ebnf x2) {
+		public static Ebnf operator & (Ebnf x1, Ebnf x2)
+		{
 			return And (x1, x2);
 		}
 
@@ -405,20 +419,21 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <param name="x1">The first x value.</param>
 		/// <param name="x2">The second x value.</param>
-		public static Ebnf And(Ebnf x1, Ebnf x2) {
+		public static Ebnf And (Ebnf x1, Ebnf x2)
+		{
 			Ebnf n = new Ebnf (EbnfType.List);
 			n._list = new List<Ebnf> ();
 
-			if(x1._type == EbnfType.List && x1._compile == null) {
+			if (x1._type == EbnfType.List && x1._compile == null) {
 				n._list.AddRange (x1._list);
-				if(x2._type == EbnfType.List && x2._compile == null) {
+				if (x2._type == EbnfType.List && x2._compile == null) {
 					n._list.AddRange (x2._list);
 				} else {
 					n._list.Add (x2);
 				}
 			} else {
 				n._list.Add (x1);
-				if(x2._type == EbnfType.List && x2._compile == null) {
+				if (x2._type == EbnfType.List && x2._compile == null) {
 					n._list.AddRange (x2._list);
 				} else {
 					n._list.Add (x2);
@@ -432,7 +447,8 @@ namespace Kekstoaster.Syntax
 		// ********************************************************************
 
 		/// <param name="x">The element that will be repeated.</param>
-		public static Ebnf operator ~(Ebnf x) {
+		public static Ebnf operator ~ (Ebnf x)
+		{
 			return Repeat (x);
 		}
 
@@ -441,10 +457,10 @@ namespace Kekstoaster.Syntax
 		/// if is matched 0 times, the element will be ignored.
 		/// </summary>
 		/// <param name="x">The element that will be repeated.</param>
-		public static Ebnf Repeat(Ebnf x) {
+		public static Ebnf Repeat (Ebnf x)
+		{
 			Ebnf n = new Ebnf (EbnfType.Repeat);
-			if(x._type != EbnfType.Repeat) 
-			{
+			if (x._type != EbnfType.Repeat) {
 				n._list = new List<Ebnf> (1);
 				n._list.Add (x);
 			} else {
@@ -459,7 +475,8 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <param name="x">The element that will be repeated.</param>
 		/// <param name="min">Minimum number of occurence.</param>
-		public static Ebnf Repeat(Ebnf x, byte min) {
+		public static Ebnf Repeat (Ebnf x, byte min)
+		{
 			Ebnf n = Repeat (x);
 			n._char = new char[] { (char)min };
 			return n;
@@ -472,9 +489,10 @@ namespace Kekstoaster.Syntax
 		/// <param name="x">The element that will be repeated.</param>
 		/// <param name="min">Minimum number of occurence.</param>
 		/// <param name="max">Maximum number of occurence.</param>
-		public static Ebnf Repeat(Ebnf x, byte min, byte max) {
+		public static Ebnf Repeat (Ebnf x, byte min, byte max)
+		{
 			Ebnf n = Repeat (x);
-			if(min > max) {
+			if (min > max) {
 				throw new ArgumentException ("Minimun value must be smaller than maximum value.");
 			}
 			n._char = new char[] { (char)min, (char)max };
@@ -486,7 +504,8 @@ namespace Kekstoaster.Syntax
 		// ********************************************************************
 
 		/// <param name="x">The element that will be made optional.</param>
-		public static Ebnf operator !(Ebnf x) {
+		public static Ebnf operator ! (Ebnf x)
+		{
 			return Optional (x);
 		}
 
@@ -495,9 +514,10 @@ namespace Kekstoaster.Syntax
 		/// The same behaviour can be achieved by using <code>Ebnf.Repeat(x, 0, 1)</code>
 		/// </summary>
 		/// <param name="x">The element that will be made optional.</param>
-		public static Ebnf Optional(Ebnf x) {
+		public static Ebnf Optional (Ebnf x)
+		{
 			Ebnf n = new Ebnf (EbnfType.Optional);
-			if(x._type != EbnfType.Optional) {
+			if (x._type != EbnfType.Optional) {
 				n._list = new List<Ebnf> (1);
 				n._list.Add (x);
 			} else {
@@ -511,7 +531,8 @@ namespace Kekstoaster.Syntax
 		// ********************************************************************
 
 		/// <param name="x">The element that must not be matched.</param>
-		public static Ebnf operator -(Ebnf x) {
+		public static Ebnf operator - (Ebnf x)
+		{
 			return Not (x);
 		}
 
@@ -519,7 +540,8 @@ namespace Kekstoaster.Syntax
 		/// Negates the specified element.
 		/// </summary>
 		/// <param name="x">The element that must not be matched.</param>
-		public static Ebnf Not(Ebnf x) {
+		public static Ebnf Not (Ebnf x)
+		{
 			Ebnf n = new Ebnf (EbnfType.Not);
 			n._list = new List<Ebnf> (1);
 			n._list.Add (x);
@@ -532,7 +554,8 @@ namespace Kekstoaster.Syntax
 
 		/// <param name="x1">The first element in the permutation.</param>
 		/// <param name="x2">The second element in the permutation.</param>
-		public static Ebnf operator ^ (Ebnf x1, Ebnf x2) {
+		public static Ebnf operator ^ (Ebnf x1, Ebnf x2)
+		{
 			return Permutation (x1, x2);
 		}
 
@@ -546,15 +569,16 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <param name="x1">The first element in the permutation.</param>
 		/// <param name="x2">The second element in the permutation.</param>
-		public static Ebnf Permutation(Ebnf x1, Ebnf x2) {
+		public static Ebnf Permutation (Ebnf x1, Ebnf x2)
+		{
 			Ebnf n = new Ebnf (EbnfType.Permutation);
 			n._list = new List<Ebnf> ();
 
-			if(x1._type == EbnfType.Permutation && x1._compile == null) {
+			if (x1._type == EbnfType.Permutation && x1._compile == null) {
 				n._list.AddRange (x1._list);
-				if(x2._type == EbnfType.Permutation && x1._compile == null) {
+				if (x2._type == EbnfType.Permutation && x1._compile == null) {
 					foreach (var item in x2._list) {
-						if(!n._list.Contains(item)) {
+						if (!n._list.Contains (item)) {
 							n._list.Add (item);
 						}
 					}
@@ -564,7 +588,7 @@ namespace Kekstoaster.Syntax
 					}
 				}
 			} else {
-				if(x2._type == EbnfType.Permutation && x2._compile == null) {
+				if (x2._type == EbnfType.Permutation && x2._compile == null) {
 					n._list.AddRange (x2._list);
 					if (!n._list.Contains (x1)) {
 						n._list.Add (x1);
@@ -580,10 +604,11 @@ namespace Kekstoaster.Syntax
 		}
 
 		/// <param name="s">The string that is converted in a Ebnf list, matching exactly the passed string.</param>
-		public static implicit operator Ebnf(string s) {
+		public static implicit operator Ebnf (string s)
+		{
 			Ebnf n = new Ebnf (EbnfType.List);
 			n._list = new List<Ebnf> ();
-			foreach(char c in s) {
+			foreach (char c in s) {
 				n._list.Add (new Ebnf (c));
 			}			
 			n._label = s;
@@ -591,7 +616,8 @@ namespace Kekstoaster.Syntax
 		}
 
 		/// <param name="c">The character that is converted to a Ebnf character, that must be matched.</param>
-		public static implicit operator Ebnf(char c) {
+		public static implicit operator Ebnf (char c)
+		{
 			return new Ebnf (c);
 		}
 
@@ -607,9 +633,10 @@ namespace Kekstoaster.Syntax
 		/// <summary>
 		/// Creates a clone of this instance.
 		/// </summary>
-		public Ebnf Clone() {
-			if(this._unique){
-				Trace.TraceWarning("When cloning a unique element, it's not quite unique anymore.");
+		public Ebnf Clone ()
+		{
+			if (this._unique) {
+				Trace.TraceWarning ("When cloning a unique element, it's not quite unique anymore.");
 			}
 
 			Ebnf n = new Ebnf (this._type);
@@ -653,13 +680,15 @@ namespace Kekstoaster.Syntax
 
 		/// <param name="x1">The first element to compare.</param>
 		/// <param name="x2">The second element to compare.</param>
-		public static bool operator ==(Ebnf x1, Ebnf x2) {
+		public static bool operator == (Ebnf x1, Ebnf x2)
+		{
 			return x1.Equals (x2);
 		}
 
 		/// <param name="x1">The first element to compare.</param>
 		/// <param name="x2">The second element to compare.</param>
-		public static bool operator !=(Ebnf x1, Ebnf x2) {
+		public static bool operator != (Ebnf x1, Ebnf x2)
+		{
 			return !x1.Equals (x2);
 		}
 
@@ -705,25 +734,28 @@ namespace Kekstoaster.Syntax
 		/// Can only be used on Choise, List, Permutation.
 		/// </summary>
 		/// <param name="x">The element that will be added to the list.</param>
-		public Ebnf Preppend(Ebnf x) {
-			if(this._type == EbnfType.Choise || this._type == EbnfType.List) {
-				this._list.Insert(0, x);
+		public Ebnf Preppend (Ebnf x)
+		{
+			if (this._type == EbnfType.Choise || this._type == EbnfType.List) {
+				this._list.Insert (0, x);
 			}
 			return this;
 		}
 
-		internal bool Scoped(ScopeType stdScope) {
+		internal bool Scoped (ScopeType stdScope)
+		{
 			return (this._scopeType == ScopeType.Default && (stdScope != ScopeType.Default && stdScope != ScopeType.Inhired)) || (this._scopeType != ScopeType.Inhired && this._scopeType != ScopeType.Default) || this._parse != null || this._compile != null;
 		}
 
-		internal ScopeType GetScopeType(ScopeType stdScope) {
-			if(this._scopeType == ScopeType.Default){
-				if(stdScope == ScopeType.Default) {
+		internal ScopeType GetScopeType (ScopeType stdScope)
+		{
+			if (this._scopeType == ScopeType.Default) {
+				if (stdScope == ScopeType.Default) {
 					return ScopeType.Inhired;
-				}else{
+				} else {
 					return stdScope;
 				}
-			}else{
+			} else {
 				return this._scopeType;
 			}
 		}
@@ -812,13 +844,13 @@ namespace Kekstoaster.Syntax
 				return this._unique;
 			}
 			set {
-				if(_type == EbnfType.List || _type == EbnfType.Permutation) {
+				if (_type == EbnfType.List || _type == EbnfType.Permutation) {
 					//if(this._unique && !value){
 					//	throw new InvalidOperationException("Cannot remove unique Flag from Ebnf-element.");
 					//}
 					this._unique = value;
 				} else {
-					throw new InvalidOperationException("Only Lists and Permutation Ebnf-elements can be unique.");
+					throw new InvalidOperationException ("Only Lists and Permutation Ebnf-elements can be unique.");
 				}
 			}
 		}
@@ -826,11 +858,13 @@ namespace Kekstoaster.Syntax
 		/// <summary>
 		/// Sets a value indicating that this instance is unique.
 		/// </summary>
-		public void Unique() {
+		public void Unique ()
+		{
 			this._unique = true;
 		}
 
-		private enum EbnfType {
+		private enum EbnfType
+		{
 			Any,
 			Range,
 			EOF,
