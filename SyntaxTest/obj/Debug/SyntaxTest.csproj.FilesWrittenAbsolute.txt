@@ -1,6 +1,0 @@
-/home/kekstoaster/Programming/Mono/Projekte/Syntax/SyntaxTest/obj/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
-/home/kekstoaster/Programming/Mono/Projekte/Syntax/SyntaxTest/bin/Debug/SyntaxTest.dll.mdb
-/home/kekstoaster/Programming/Mono/Projekte/Syntax/SyntaxTest/bin/Debug/SyntaxTest.dll
-/home/kekstoaster/Programming/Mono/Projekte/Syntax/SyntaxTest/obj/Debug/SyntaxTest.dll
-/home/kekstoaster/Programming/Mono/Projekte/Syntax/SyntaxTest/obj/Debug/SyntaxTest.dll.mdb
-/home/kekstoaster/Programming/Mono/Projekte/Syntax/SyntaxTest/bin/Debug/nunit.framework.dll
