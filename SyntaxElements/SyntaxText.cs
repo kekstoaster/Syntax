@@ -6,7 +6,8 @@ namespace Kekstoaster.Syntax
 	/// <summary>
 	/// A syntax element that combines all nested elements to a single string
 	/// </summary>
-	public class SyntaxText:SyntaxElement {		
+	public class SyntaxText:SyntaxElement
+	{
 		private string _text;
 
 		/// <summary>
@@ -14,11 +15,13 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <param name="compiler">The compiler used to compile the corresponding Ebnf Element</param>
 		/// <param name="list">The list of all nested syntax elements</param>
-		public SyntaxText(EbnfCompiler compiler, IEnumerable<SyntaxElement> list):base(compiler) {
-			_text = "";
+		internal SyntaxText (ParseAction parse, EbnfCompiler compiler, IEnumerable<SyntaxElement> list) : base (parse, compiler)
+		{
+			System.Text.StringBuilder sb = new System.Text.StringBuilder ();
 			foreach (var item in list) {
-				_text += item.Text;
+				sb.Append (item.Text);
 			}
+			_text = sb.ToString ();
 		}
 
 		/// <summary>
@@ -26,7 +29,8 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <param name="compiler">The compiler used to compile the corresponding Ebnf Element</param>
 		/// <param name="text">Sets the text content of this element to the specified text</param>
-		public SyntaxText(EbnfCompiler compiler, string text):base(compiler) {
+		public SyntaxText (ParseAction parse, EbnfCompiler compiler, string text) : base (parse, compiler)
+		{
 			this._text = text;
 		}
 
@@ -35,7 +39,8 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <param name="compiler">The compiler used to compile the corresponding Ebnf Element</param>
 		/// <param name="c">Sets the text content of this element to the specified character</param>
-		public SyntaxText(EbnfCompiler compiler, char c):base(compiler) {
+		public SyntaxText (ParseAction parse, EbnfCompiler compiler, char c) : base (parse, compiler)
+		{
 			this._text = c.ToString ();
 		}
 

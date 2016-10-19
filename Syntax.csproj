@@ -11,6 +11,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
+    <ReleaseVersion>1.0</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,12 +25,12 @@
     <DocumentationFile>bin\Debug\Syntax.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <DocumentationFile>bin\Release\Syntax.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -53,7 +54,6 @@
     <Compile Include="SyntaxElements\SyntaxText.cs" />
     <Compile Include="Ebnf\Ebnf.cs" />
     <Compile Include="Ebnf\Ebnf.Parse.cs" />
-    <Compile Include="Ebnf\Ebnf.ToString.cs" />
     <Compile Include="Ebnf\Ubnf.cs" />
     <Compile Include="Enums\ScopeType.cs" />
     <Compile Include="Enums\EbnfStandardBehavior.cs" />
@@ -61,6 +61,18 @@
     <Compile Include="Encoding\EofException.cs" />
     <Compile Include="Encoding\EncoderUTF8.cs" />
     <Compile Include="Encoding\IDocumemtEncoder.cs" />
+    <Compile Include="Ebnf\EbnfChar.cs" />
+    <Compile Include="Ebnf\EbnfRange.cs" />
+    <Compile Include="Ebnf\EbnfAny.cs" />
+    <Compile Include="Ebnf\EbnfEOF.cs" />
+    <Compile Include="Ebnf\EbnfList.cs" />
+    <Compile Include="Ebnf\EbnfOptional.cs" />
+    <Compile Include="Ebnf\EbnfChoice.cs" />
+    <Compile Include="Ebnf\EbnfRepeat.cs" />
+    <Compile Include="Ebnf\EbnfExclusion.cs" />
+    <Compile Include="Ebnf\EbnfPermutation.cs" />
+    <Compile Include="Ebnf\EbnfEnumerable.cs" />
+    <Compile Include="Ebnf\IEbnfUnique.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -12,7 +12,7 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <value>A single space element.</value>
 		public static Ebnf Space {
-			get { return new Ebnf (' '); }
+			get { return new EbnfChar (' '); }
 		}
 
 		/// <summary>
@@ -20,7 +20,7 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <value>The a to z element.</value>
 		public static Ebnf a_to_z {
-			get { return Ebnf.Range ('a', 'z'); }
+			get { return new EbnfRange ('a', 'z'); }
 		}
 
 		/// <summary>
@@ -28,7 +28,7 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <value>The A to Z element.</value>
 		public static Ebnf A_to_Z {
-			get { return Ebnf.Range ('A', 'Z'); }
+			get { return new EbnfRange ('A', 'Z'); }
 		}
 
 		/// <summary>
@@ -36,7 +36,7 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <value>The 0 to 9 element.</value>
 		public static Ebnf _0_to_9 {
-			get { return Ebnf.Range ('0', '9'); }
+			get { return new EbnfRange ('0', '9'); }
 		}
 
 		/// <summary>
@@ -44,7 +44,7 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <value>The Ebnf element.</value>
 		public static Ebnf Alpha {
-			get { return Ebnf.Range ('a', 'z', ScopeType.Parent) | Ebnf.Range ('A', 'Z', ScopeType.Parent); }
+			get { return new EbnfRange ('a', 'z', ScopeType.Parent) | new EbnfRange ('A', 'Z', ScopeType.Parent); }
 		}
 
 		/// <summary>
@@ -52,7 +52,7 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <value>The Ebnf element.</value>
 		public static Ebnf AlphaNum {
-			get { return Ebnf.Range ('a', 'z', ScopeType.Parent) | Ebnf.Range ('A', 'Z', ScopeType.Parent) | Ebnf.Range ('0', '9', ScopeType.Parent); }
+			get { return new EbnfRange ('a', 'z', ScopeType.Parent) | new EbnfRange ('A', 'Z', ScopeType.Parent) | new EbnfRange ('0', '9', ScopeType.Parent); }
 		}
 
 		/// <summary>
@@ -61,10 +61,10 @@ namespace Kekstoaster.Syntax
 		/// <value>The Ebnf element.</value>
 		public static Ebnf Whitespace {
 			get {
-				Ebnf space = new Ebnf(' ', ScopeType.Parent),
-				     tab = new Ebnf('\t', ScopeType.Parent),
-				     carriageReturn = new Ebnf('\r', ScopeType.Parent),
-				     lineFeed = new Ebnf('\n', ScopeType.Parent);
+				EbnfChar space = new EbnfChar (' ', ScopeType.Parent),
+				tab = new EbnfChar ('\t', ScopeType.Parent),
+				carriageReturn = new EbnfChar ('\r', ScopeType.Parent),
+				lineFeed = new EbnfChar ('\n', ScopeType.Parent);
 								     
 				return space | tab | carriageReturn | lineFeed;
 			}
@@ -77,10 +77,10 @@ namespace Kekstoaster.Syntax
 		/// <value>The Ebnf element.</value>
 		public static Ebnf Identifier {
 			get {
-				Ebnf az = Ebnf.Range ('a', 'z', ScopeType.Parent);
-				Ebnf AZ = Ebnf.Range ('A', 'Z', ScopeType.Parent);
-				Ebnf _09 = Ebnf.Range ('0', '9', ScopeType.Parent);
-				Ebnf _ = new Ebnf ('_', ScopeType.Parent);
+				EbnfRange az = new EbnfRange ('a', 'z', ScopeType.Parent);
+				EbnfRange AZ = new EbnfRange ('A', 'Z', ScopeType.Parent);
+				EbnfRange _09 = new EbnfRange ('0', '9', ScopeType.Parent);
+				EbnfChar _ = new EbnfChar ('_', ScopeType.Parent);
 
 				Ebnf c1 = az | AZ | _;
 				c1.ScopeType = ScopeType.Parent;
@@ -103,7 +103,7 @@ namespace Kekstoaster.Syntax
 		/// <value>The seperator.</value>
 		public static Ebnf Seperator {
 			get {
-				return Ebnf.Not(Ebnf.Range ('a', 'z', ScopeType.Parent) | Ebnf.Range ('A', 'Z', ScopeType.Parent) | Ebnf.Range ('0', '9', ScopeType.Parent) | new Ebnf('_', ScopeType.Parent));
+				return new EbnfExclusion (new EbnfRange ('a', 'z', ScopeType.Parent) | new EbnfRange ('A', 'Z', ScopeType.Parent) | new EbnfRange ('0', '9', ScopeType.Parent) | new EbnfChar ('_', ScopeType.Parent));
 			}
 		}
 	}

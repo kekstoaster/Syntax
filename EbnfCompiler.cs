@@ -98,6 +98,8 @@ namespace Kekstoaster.Syntax
 		{
 			if (!_compiling) {
 				_compiling = true;
+				_globals = new ItemList<object> ();
+				_inits.Clear ();
 				object compile;
 				if (stream.CanRead && stream.CanSeek) {			
 					try {

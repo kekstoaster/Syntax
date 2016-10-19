@@ -7,14 +7,20 @@ namespace Kekstoaster.Syntax
 	/// This usually occurs when an optional element was not matched, a repeat list did not match even once
 	/// or a not element did not match.
 	/// </summary>
-	internal sealed class IgnoredElement:SyntaxElement {
+	internal sealed class IgnoredElement:SyntaxElement
+	{
+		private static ParseAction ignoreParseAction = new ParseAction (new Func<SyntaxElement, bool> (delegate(SyntaxElement arg) {
+			return false;
+		}), new Action<ScopeContext, SyntaxElement[]> (delegate(ScopeContext s1, SyntaxElement[] s2) {
+		}));
 		private static IgnoredElement _instance = new IgnoredElement ();
 
-		private IgnoredElement():base(null){
+		private IgnoredElement () : base (ignoreParseAction, null)
+		{
 
 		}
 
-		public static IgnoredElement Instance {
+		internal static IgnoredElement Instance {
 			get {
 				return _instance;
 			}

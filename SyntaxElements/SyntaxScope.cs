@@ -11,7 +11,6 @@ namespace Kekstoaster.Syntax
 	public class SyntaxScope : SyntaxElement
 	{
 		private List<SyntaxElement> _scopeContent;
-		private ParseAction _parse = null;
 		private CompileAction _compile = null;
 		private ScopeContext _context;
 
@@ -21,7 +20,9 @@ namespace Kekstoaster.Syntax
 		/// <param name="compiler">The compiler used to compile the corresponding Ebnf Element</param>
 		/// <param name="parse">The parse action of the Ebnf element</param>
 		/// <param name="compile">The compile action of the Ebnf element</param>
-		public SyntaxScope(EbnfCompiler compiler, ParseAction parse, CompileAction compile):this(compiler, parse, compile, null) { }
+		internal SyntaxScope (EbnfCompiler compiler, ParseAction parse, CompileAction compile) : this (compiler, parse, compile, null)
+		{
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Kekstoaster.Syntax.SyntaxScope"/> class.
@@ -30,9 +31,9 @@ namespace Kekstoaster.Syntax
 		/// <param name="parse">The parse action of the Ebnf element</param>
 		/// <param name="compile">The compile action of the Ebnf element</param>
 		/// <param name="parent">The parent syntax scope</param>
-		public SyntaxScope(EbnfCompiler compiler, ParseAction parse, CompileAction compile, SyntaxScope parent):base(compiler, parent) {
+		public SyntaxScope (EbnfCompiler compiler, ParseAction parse, CompileAction compile, SyntaxScope parent) : base (parse, compiler, parent)
+		{
 			this._compile = compile;
-			this._parse = parse;
 			this._scopeContent = new List<SyntaxElement> ();
 			this._context = new ScopeContext (this);
 		}
@@ -54,21 +55,25 @@ namespace Kekstoaster.Syntax
 		/// Adds the specified text.
 		/// </summary>
 		/// <param name="text">Text.</param>
-		public void Add(string text) {
-			_scopeContent.Add (new SyntaxText(this.Compiler, text));
+		public void Add (string text)
+		{
+			_scopeContent.Add (new SyntaxText (Ebnf.DefaultParseAction, this.Compiler, text));
 		}
 
-		internal void Add(SyntaxElement element) {
+		internal void Add (SyntaxElement element)
+		{
 			_scopeContent.Add (element);
 		}
 
-		internal void AddRange(SyntaxElement[] elements) {
+		internal void AddRange (SyntaxElement[] elements)
+		{
 			foreach (var item in elements) {
 				Add (item);
 			}
 		}
 
-		internal override object Compile(ScopeContext parentContext) {
+		internal override object Compile (ScopeContext parentContext)
+		{
 			object[] compiled = new object[_scopeContent.Count];
 			for (int i = 0; i < _scopeContent.Count; i++) {
 				compiled [i] = _scopeContent [i].Compile (this.Context);
@@ -77,25 +82,26 @@ namespace Kekstoaster.Syntax
 				return this._compile.Compile (parentContext, compiled);
 			} else {
 				switch (this.Compiler.StandardCompile) {
-					case EbnfCompileBehavior.Text:
-						StringBuilder sb = new StringBuilder(compiled.Length);
-						foreach (var item in compiled) {
-							sb.Append(item.ToString());
+				case EbnfCompileBehavior.Text:
+					StringBuilder sb = new StringBuilder (compiled.Length);
+					foreach (var item in compiled) {
+						if (item != null) {
+							sb.Append (item.ToString ());
 						}
-						return sb.ToString();
-					case EbnfCompileBehavior.List:
-						return compiled;
-					default: // Ignore
-						return null;
+					}
+					return sb.ToString ();
+				case EbnfCompileBehavior.List:
+					return compiled;
+				default: // Ignore
+					return null;
 				}
 			}
 		}
 
-		internal void Parse(ScopeContext parentContext) {
+		internal protected override void Parse (ScopeContext parentContext)
+		{
 			foreach (var item in _scopeContent) {
-				if(item is SyntaxScope) {
-					((SyntaxScope)item).Parse (this.Context);
-				}
+				item.Parse (this.Context);
 			}
 			this._parse.Parse (parentContext, _scopeContent.ToArray ());
 		}
@@ -118,7 +124,8 @@ namespace Kekstoaster.Syntax
 		/// </summary>
 		/// <returns><c>true</c> if the specified arg is neccessary for compilation; otherwise, <c>false</c>.</returns>
 		/// <param name="arg">The syntax element to check for.</param>
-		public bool IsNeccessary (SyntaxElement arg) {
+		public bool IsNeccessary (SyntaxElement arg)
+		{
 			return this._parse.IsNeccessary (arg);
 		}
 	}

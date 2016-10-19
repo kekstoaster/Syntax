@@ -5,14 +5,15 @@ namespace Kekstoaster.Syntax
 	/// <summary>
 	/// Static class for creating unique elements.
 	/// </summary>
-	public static class Ubnf {
+	public static class Ubnf
+	{
 		/// <summary>
 		/// Gets a new empty list that is marked unique.
 		/// </summary>
 		/// <value>The new empty list.</value>
-		public static Ebnf EmptyList {
+		public static EbnfList EmptyList {
 			get {
-				Ebnf n = Ebnf.EmptyList;
+				EbnfList n = new EbnfList ();
 				n.Unique ();
 				return n;
 			}
@@ -22,9 +23,9 @@ namespace Kekstoaster.Syntax
 		/// Gets a new empty permutation that is marked unique.
 		/// </summary>
 		/// <value>The new empty permutation.</value>
-		public static Ebnf EmptyPermutation {
+		public static EbnfPermutation EmptyPermutation {
 			get {
-				Ebnf n = Ebnf.EmptyPermutation;
+				EbnfPermutation n = new EbnfPermutation ();
 				n.Unique ();
 				return n;
 			}

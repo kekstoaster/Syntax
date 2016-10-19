@@ -5,25 +5,36 @@ namespace Kekstoaster.Syntax
 	/// <summary>
 	/// Base syntax element for parsing.
 	/// </summary>
-	public abstract class SyntaxElement {
+	public abstract class SyntaxElement
+	{
 		private SyntaxScope _parent;
 		private string _label = null;
 		private EbnfCompiler _compiler;
+		protected ParseAction _parse = null;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Kekstoaster.Syntax.SyntaxElement"/> class.
 		/// </summary>
 		/// <param name="compiler">The compiler used to compile the corresponding Ebnf Element</param>
-		protected SyntaxElement(EbnfCompiler compiler):this(compiler, null) { }
+		protected SyntaxElement (ParseAction parse, EbnfCompiler compiler) : this (parse, compiler, null)
+		{
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Kekstoaster.Syntax.SyntaxElement"/> class.
 		/// </summary>
 		/// <param name="compiler">The compiler used to compile the corresponding Ebnf Element</param>
 		/// <param name="parent">The parent syntax scope</param>
-		protected SyntaxElement(EbnfCompiler compiler, SyntaxScope parent) {
+		protected SyntaxElement (ParseAction parse, EbnfCompiler compiler, SyntaxScope parent)
+		{
 			this._compiler = compiler;
+			this._parse = parse;
 			this._parent = parent;
+		}
+
+		internal protected virtual void Parse (ScopeContext parentContext)
+		{
+			this._parse.Parse (parentContext);
 		}
 
 		/// <summary>
@@ -41,7 +52,7 @@ namespace Kekstoaster.Syntax
 			}
 		}
 
-		internal abstract object Compile (ScopeContext parentContext);	
+		internal abstract object Compile (ScopeContext parentContext);
 
 		/// <summary>
 		/// Gets the text associated with the element.
