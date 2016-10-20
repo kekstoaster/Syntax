@@ -1,0 +1,8 @@
+language: csharp
+solution: src/Syntax.sln
+install:
+  - nuget restore src/Syntax.sln
+  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
+script:
+  - xbuild /p:Configuration=Release src/Syntax.sln
+  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./test/bin/Release/SyntaxTest.dll
