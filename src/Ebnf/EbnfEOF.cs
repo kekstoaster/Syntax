@@ -26,7 +26,7 @@ namespace Kekstoaster.Syntax
 				eof.Label = EOF_LABEL;
 				result = ParseResult (eof, compiler);
 			} else {
-				ThrowElementException ();
+				throw ElementException ();
 			}
 
 			return result;

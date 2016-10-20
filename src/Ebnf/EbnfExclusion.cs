@@ -33,7 +33,7 @@ namespace Kekstoaster.Syntax
 						throw new ParseException (this._error, this);
 					}
 				} else {
-					ThrowElementException ();
+					throw ElementException ();
 				}
 			} else {					
 				result = IgnoredElement.Instance;

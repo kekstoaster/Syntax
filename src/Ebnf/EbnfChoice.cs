@@ -23,22 +23,23 @@ namespace Kekstoaster.Syntax
 			object result = null;
 
 			object arg;
-			bool success = false;
+			//bool success = false;
 
 			foreach (var item in _list) {
 				try {
 					arg = item.MatchElement (s, compiler);
 					result = ParseResult (arg, compiler);
-					success = true;
-					break;
+					//success = true;
+					//break;
+					return result;
 				} catch (EbnfElementException) {
 					s.Position = startPos;
 				}
 			}		
-			if (!success) {
-				ThrowElementException ();
-			}
-			return result;
+			//if (!success) {
+			throw ElementException ();
+			//}
+			//return result;
 		}
 
 		public override bool CanBeEmpty {

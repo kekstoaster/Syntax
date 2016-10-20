@@ -78,7 +78,7 @@ namespace Kekstoaster.Syntax
 						if (matches && this._unique) {
 							throw new ParseException ("Unique ELement found but not fully matched");
 						} else {
-							ThrowElementException ();
+							throw ElementException ();
 						}
 					}
 				}

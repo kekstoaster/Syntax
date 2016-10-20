@@ -670,6 +670,18 @@ namespace Kekstoaster.Syntax
 		}
 
 		/// <summary>
+		/// Gets a new any-char element.
+		/// </summary>
+		/// <value>The Any-char element.</value>
+		public static EbnfAny AnyCharOrEOF {
+			get {
+				EbnfAny result = new EbnfAny ();
+				result._allowEOF = true;
+				return result;
+			}
+		}
+
+		/// <summary>
 		/// Gets a new empty list.
 		/// </summary>
 		/// <value>The new empty list.</value>

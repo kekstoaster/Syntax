@@ -9,6 +9,7 @@ namespace Kekstoaster.Syntax
 		/// The default label of the element returned when calling Ebnf.AnyChar
 		/// </summary>
 		public const string ANYCHAR_LABEL = "[[ANYCHAR]]";
+		internal bool _allowEOF = false;
 
 		public EbnfAny (ScopeType scopetype = ScopeType.Default) : base (scopetype)
 		{
@@ -28,8 +29,12 @@ namespace Kekstoaster.Syntax
 					c = new SyntaxText (this.ParseAction, compiler, (char)next);
 					c.Label = this.Label;
 				} else {
-					c = new EmptyElement (this.ParseAction, compiler);
-					c.Label = EbnfEOF.EOF_LABEL;
+					if (_allowEOF) {
+						c = new EmptyElement (this.ParseAction, compiler);
+						c.Label = EbnfEOF.EOF_LABEL;
+					} else {
+						throw ElementException ();
+					}
 				}
 			} else {
 				try {
@@ -37,8 +42,12 @@ namespace Kekstoaster.Syntax
 					c = new SyntaxText (this.ParseAction, compiler, nc);
 					c.Label = this.Label;
 				} catch (EofException) {
-					c = new EmptyElement (this.ParseAction, compiler);
-					c.Label = EbnfEOF.EOF_LABEL;
+					if (_allowEOF) {
+						c = new EmptyElement (this.ParseAction, compiler);
+						c.Label = EbnfEOF.EOF_LABEL;
+					} else {
+						throw ElementException ();
+					}					
 				}
 			}
 			result = ParseResult (c, compiler);

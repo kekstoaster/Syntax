@@ -66,12 +66,12 @@ namespace Kekstoaster.Syntax
 			return result;
 		}
 
-		protected void ThrowElementException ()
+		internal EbnfElementException ElementException ()
 		{
 			if (this._error == null) {
-				throw new EbnfElementException ();
+				return new EbnfElementException ();
 			} else {
-				throw new EbnfElementException (this._error);
+				return new EbnfElementException (this._error);
 			}
 		}
 

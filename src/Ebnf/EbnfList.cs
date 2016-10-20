@@ -52,9 +52,13 @@ namespace Kekstoaster.Syntax
 					arg = item.MatchElement (s, compiler);
 					matches = matches | AddArgToList (item, arg, allArgs, compiler);
 				}
-			} catch (Exception ex) {
+			} catch (EbnfElementException ex) {
 				if (matches && this._unique) {
-					throw new ParseException ("Unique ELement found but not fully matched");
+					if (this._error == null) {
+						throw new ParseException ("Unique ELement found but not fully matched", this);
+					} else {
+						throw new ParseException (this._error, ex, this);
+					}
 				} else {
 					if (this._error == null) {
 						throw ex;

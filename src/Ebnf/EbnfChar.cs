@@ -22,14 +22,14 @@ namespace Kekstoaster.Syntax
 			if (compiler.Encoder == null) {
 				int n = s.ReadByte ();
 				if (n == -1) {
-					ThrowElementException ();
+					throw ElementException ();
 				}
 				next = (char)n;
 			} else {
 				try {
 					next = compiler.Encoder.NextChar (s);
 				} catch (EofException) {
-					ThrowElementException ();
+					throw ElementException ();
 				}
 			}
 			//Debug.Write ((char)next);
