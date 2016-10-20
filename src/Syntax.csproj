@@ -9,8 +9,6 @@
     <AssemblyName>Syntax</AssemblyName>
     <SynchReleaseVersion>false</SynchReleaseVersion>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ReleaseVersion>1.0</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -73,6 +71,7 @@
     <Compile Include="Ebnf\EbnfPermutation.cs" />
     <Compile Include="Ebnf\EbnfEnumerable.cs" />
     <Compile Include="Ebnf\IEbnfUnique.cs" />
+    <Compile Include="DocumentPosition.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

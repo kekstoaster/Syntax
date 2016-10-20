@@ -703,5 +703,10 @@ namespace Kekstoaster.Syntax
 		}
 
 		internal abstract string ToString (int depth);
+
+		public string ErrorMessage {
+			get{ return _error; }
+			set{ _error = value; }
+		}
 	}
 }

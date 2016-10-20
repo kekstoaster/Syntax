@@ -6,6 +6,7 @@ namespace Kekstoaster.Syntax
 	public class EbnfExclusion:Ebnf
 	{
 		Ebnf _element;
+		bool _serious;
 
 		public EbnfExclusion (Ebnf element, ScopeType scopetype = ScopeType.Default) : base (scopetype)
 		{
@@ -25,7 +26,15 @@ namespace Kekstoaster.Syntax
 				s.Position = startPos;					
 			}
 			if (arg != null) {
-				ThrowElementException ();
+				if (_serious) {
+					if (this._error == null) {
+						throw new ParseException ("element is not allowed at this position", this);
+					} else {
+						throw new ParseException (this._error, this);
+					}
+				} else {
+					ThrowElementException ();
+				}
 			} else {					
 				result = IgnoredElement.Instance;
 			}
@@ -47,6 +56,15 @@ namespace Kekstoaster.Syntax
 			get {
 				return true;
 			}
+		}
+
+		public bool IsSerious {
+			get { return _serious; }
+		}
+
+		public void Serious ()
+		{
+			_serious = true;
 		}
 
 		public override Ebnf Clone ()

@@ -119,7 +119,12 @@ namespace Kekstoaster.Syntax
 					} catch (EbnfElementException ex) {
 						// EbnfElement is internal and can only occur during parsing.
 						// This happens, when the stream contains no valid syntax
-						throw new ParseException (ErrorText (stream, ex));
+						ParseException pe = new ParseException (ErrorText (stream, ex));
+						pe.DocumentPosition = GetErrorPosition (stream);
+						throw pe;
+					} catch (ParseException pe) {
+						pe.DocumentPosition = GetErrorPosition (stream);
+						throw pe;
 					} catch (Exception) {
 						// forward any other exception, usually ParseException or CompileException
 						throw;
@@ -177,30 +182,56 @@ namespace Kekstoaster.Syntax
 			}
 		}
 
-		// Create the Error message with line number and line position
-		private static string ErrorText (Stream s, EbnfElementException ex)
+		internal DocumentPosition GetErrorPosition (Stream s)
 		{
-			string resStr;
+			char next = '\0';
+			int n = 0;
 			long pos = s.Position;
-			s.Position = 0;
 			int line = 1;
 			int linePos = 1;
-			int next;
 
-			for (long i = 0; i < pos; ++i) {
-				next = s.ReadByte ();
+			if (!s.CanSeek) {
+				throw new ArgumentException ("Stream can not seek", "s");
+			}
+			s.Position = 0;
+
+			while (s.Position < pos) {
+				if (Encoder == null) {
+					n = s.ReadByte ();
+					if (n == -1) {
+						break;
+					}
+					next = (char)n;
+				} else {
+					try {
+						next = Encoder.NextChar (s);
+					} catch (EofException) {
+						break;
+					}
+				}
+
 				linePos++;
-
 				if (next == (int)'\n') {
 					line++;
 					linePos = 1;
 				}
 			}
 
+			s.Position = pos;
+			return new DocumentPosition (line, linePos);
+		}
+
+		// Create the Error message with line number and line position
+		private string ErrorText (Stream s, EbnfElementException ex)
+		{
+			string resStr;
+
+			var d = GetErrorPosition (s);
+
 			if (string.IsNullOrEmpty (ex.Message)) {
-				resStr = string.Format ("syntax error on line {0}:{1}", line, linePos);
+				resStr = string.Format ("syntax error on line {0}:{1}", d.Line, d.Character);
 			} else {
-				resStr = string.Format ("syntax error on line {0}:{1}\r\n{2}", line, linePos, ex.Message);
+				resStr = string.Format ("syntax error on line {0}:{1}\r\n{2}", d.Line, d.Character, ex.Message);
 			}
 
 			return resStr;

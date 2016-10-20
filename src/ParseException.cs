@@ -9,6 +9,8 @@ namespace Kekstoaster.Syntax
 	public class ParseException : Exception
 	{
 		private Ebnf _faulty;
+		private DocumentPosition _pos;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:ParseException"/> class
 		/// </summary>
@@ -46,7 +48,7 @@ namespace Kekstoaster.Syntax
 			get {
 				return this._faulty;
 			}
-			set{
+			set {
 				if (this._faulty == null) {
 					this._faulty = value;
 				}
@@ -60,6 +62,11 @@ namespace Kekstoaster.Syntax
 		/// <param name="info">The object that holds the serialized object data.</param>
 		protected ParseException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base (info, context)
 		{
+		}
+
+		public DocumentPosition DocumentPosition {
+			get{ return _pos; }
+			internal set { _pos = value; }
 		}
 	}
 }
