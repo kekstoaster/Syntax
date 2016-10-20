@@ -6,3 +6,13 @@ install:
 script:
   - xbuild /p:Configuration=Release src/Syntax.sln
   - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./test/bin/Release/SyntaxTest.dll
+before_deploy:
+  - zip -9 Syntax.zip src/bin/Release/Syntax.dll src/bin/Release/Syntax.xml
+deploy:
+  provider: releases
+  api_key: "$GH_TOKEN"
+  file: "Syntax.zip"
+  skip_cleanup: true
+  on:
+    tags: true
+
