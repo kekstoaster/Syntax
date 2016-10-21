@@ -55,13 +55,12 @@ namespace Kekstoaster.Syntax
 			}
 		}
 
-		public override bool IsGeneric {
-			get {
-				if (this.CompileAction == null) {
-					return true;
-				} else {
-					return false;
-				}
+		internal protected override bool CheckGeneric (System.Collections.Generic.HashSet<Ebnf> hashset)
+		{			
+			if (this.CompileAction == null) {
+				return true;
+			} else {
+				return false;
 			}
 		}
 

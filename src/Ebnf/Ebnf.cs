@@ -253,7 +253,13 @@ namespace Kekstoaster.Syntax
 
 		public abstract bool CanBeEmpty { get; }
 
-		public abstract bool IsGeneric { get; }
+		public bool IsGeneric {
+			get { 
+				return CheckGeneric (null);
+			}
+		}
+
+		internal protected abstract bool CheckGeneric (HashSet<Ebnf> hashset);
 
 		// ********************************************************************
 		// ***************************** Choice *******************************

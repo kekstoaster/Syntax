@@ -32,7 +32,7 @@ namespace Kekstoaster.Syntax
 		private SyntaxElement ToDefaultCompile (EbnfCompiler compiler, params SyntaxElement[] args)
 		{
 			SyntaxElement result;
-			if (args != null) {				
+			if (args != null) {
 				switch (compiler.StandardCompile) {
 				case EbnfCompileBehavior.List:
 					{

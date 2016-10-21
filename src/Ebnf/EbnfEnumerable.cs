@@ -46,18 +46,21 @@ namespace Kekstoaster.Syntax
 			return this;
 		}
 
-		public override bool IsGeneric {
-			get {
-				if (this.CompileAction == null) {
-					foreach (var item in _list) {
-						if (!item.IsGeneric) {
-							return false;
-						}
+		internal protected override bool CheckGeneric (System.Collections.Generic.HashSet<Ebnf> hashset)
+		{
+			if (hashset == null)
+				hashset = new HashSet<Ebnf> ();
+		
+			hashset.Add (this);
+			if (this.CompileAction == null) {
+				foreach (var item in _list) {
+					if (!hashset.Contains (item) && !item.CheckGeneric (hashset)) {
+						return false;
 					}
-					return true;
-				} else {
-					return false;
 				}
+				return true;
+			} else {
+				return false;
 			}
 		}
 
