@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonExample", "JsonExample.csproj", "{382BC087-5F14-4470-B126-BC4CBC352D1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syntax", "..\..\src\Syntax.csproj", "{357A7386-E6D6-4450-8D85-51E260FDA14F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{357A7386-E6D6-4450-8D85-51E260FDA14F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{357A7386-E6D6-4450-8D85-51E260FDA14F}.Debug|x86.Build.0 = Debug|Any CPU
+		{357A7386-E6D6-4450-8D85-51E260FDA14F}.Release|x86.ActiveCfg = Release|Any CPU
+		{357A7386-E6D6-4450-8D85-51E260FDA14F}.Release|x86.Build.0 = Release|Any CPU
+		{382BC087-5F14-4470-B126-BC4CBC352D1A}.Debug|x86.ActiveCfg = Debug|x86
+		{382BC087-5F14-4470-B126-BC4CBC352D1A}.Debug|x86.Build.0 = Debug|x86
+		{382BC087-5F14-4470-B126-BC4CBC352D1A}.Release|x86.ActiveCfg = Release|x86
+		{382BC087-5F14-4470-B126-BC4CBC352D1A}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+EndGlobal

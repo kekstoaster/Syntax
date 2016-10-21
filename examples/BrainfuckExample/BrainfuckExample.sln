@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainfuckExample", "BrainfuckExample.csproj", "{AF8D7F41-93A2-43F7-8867-F9E4FE74013E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syntax", "..\..\src\Syntax.csproj", "{357A7386-E6D6-4450-8D85-51E260FDA14F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{357A7386-E6D6-4450-8D85-51E260FDA14F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{357A7386-E6D6-4450-8D85-51E260FDA14F}.Debug|x86.Build.0 = Debug|Any CPU
+		{357A7386-E6D6-4450-8D85-51E260FDA14F}.Release|x86.ActiveCfg = Release|Any CPU
+		{357A7386-E6D6-4450-8D85-51E260FDA14F}.Release|x86.Build.0 = Release|Any CPU
+		{AF8D7F41-93A2-43F7-8867-F9E4FE74013E}.Debug|x86.ActiveCfg = Debug|x86
+		{AF8D7F41-93A2-43F7-8867-F9E4FE74013E}.Debug|x86.Build.0 = Debug|x86
+		{AF8D7F41-93A2-43F7-8867-F9E4FE74013E}.Release|x86.ActiveCfg = Release|x86
+		{AF8D7F41-93A2-43F7-8867-F9E4FE74013E}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+EndGlobal
